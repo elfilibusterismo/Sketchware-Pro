@@ -133,20 +133,20 @@ public class LogicClickListener implements View.OnClickListener {
             boolean isValidModifier = modifiersValidator.isValid();
             boolean isValidType = varTypeValidator.isValid();
             boolean isValidName = validator.b();
-            
+
             String variableModifier = modifier.getText().toString().trim();
             String variableType = type.getText().toString().trim();
             String variableName = name.getText().toString().trim();
             String variableInitializer = initializer.getText().toString().trim();
 
-            boolean isModifierNotEmpty = !variableModifier.isEmpty();
+            boolean isModifierEmpty = variableModifier.isEmpty();
             boolean validType = !variableType.isEmpty();
             boolean validName = !variableName.isEmpty();
             boolean getsInitialized = !variableInitializer.isEmpty();
 
-            if(isModifierNotEmpty && !isValidModifier) {
+            if (!isModifierEmpty && !isValidModifier) {
                 modifierLayout.requestFocus();
-                modifierLayout.setError("Error: invalid modifier");
+                modifierLayout.setError("Invalid modifier");
                 return;
             } else {
                 modifierLayout.setError(null);
@@ -154,12 +154,14 @@ public class LogicClickListener implements View.OnClickListener {
 
             if (validType && isValidType) {
                 typeLayout.setError(null);
-            } else if(validType && !isValidType) {
+            } else if (validType && !isValidType) {
                 typeLayout.requestFocus();
-                typeLayout.setError("Error: invalid variable type");
+                typeLayout.setError("Invalid variable type");
                 return;
-            }else {
-                if (validName) typeLayout.requestFocus();
+            } else {
+                if (validName) {
+                    typeLayout.requestFocus();
+                }
                 typeLayout.setError("Type can't be empty");
                 return;
             }
@@ -176,15 +178,12 @@ public class LogicClickListener implements View.OnClickListener {
             }
 
             if (validName && validType && isValidName && isValidType) {
-                StringBuilder toAdd = new StringBuilder();
-                if (isModifierNotEmpty) {
-                    toAdd.append(variableModifier).append(" ");
-                }
-                toAdd.append(variableType).append(" ").append(variableName);
+                String toAdd = (!isModifierEmpty? variableModifier + " ": "");
+                toAdd += variableType + " " + variableName;
                 if (getsInitialized) {
-                    toAdd.append(" = ").append(variableInitializer);
+                    toAdd += " = " + variableInitializer;
                 }
-                logicEditor.b(6, toAdd.toString().trim());
+                logicEditor.b(6, toAdd.trim());
                 dialog.dismiss();
             }
         });
@@ -233,7 +232,9 @@ public class LogicClickListener implements View.OnClickListener {
             for (int i = 0, size = variableTypeInstances.size(); i < size; i++) {
                 String instanceName = variableTypeInstances.get(i);
 
-                if (i == 0) data.add(new Item(String.format(variableType.second, size)));
+                if (i == 0) {
+                    data.add(new Item(String.format(variableType.second, size)));
+                }
                 data.add(new Item(instanceName, R.string.logic_editor_message_currently_used_variable));
             }
         }
@@ -283,7 +284,9 @@ public class LogicClickListener implements View.OnClickListener {
             if (validType) {
                 typeLayout.setError(null);
             } else {
-                if (validName) typeLayout.requestFocus();
+                if (validName) {
+                    typeLayout.requestFocus();
+                }
                 typeLayout.setError("Type can't be empty");
             }
 
@@ -334,7 +337,9 @@ public class LogicClickListener implements View.OnClickListener {
             for (int i = 0, size = lists.size(); i < size; i++) {
                 String instanceName = lists.get(i);
 
-                if (i == 0) data.add(new Item(String.format(listType.second, size)));
+                if (i == 0) {
+                    data.add(new Item(String.format(listType.second, size)));
+                }
                 data.add(new Item(instanceName, R.string.logic_editor_message_currently_used_list));
             }
         }
@@ -393,7 +398,8 @@ public class LogicClickListener implements View.OnClickListener {
         private final Function<String, Boolean> isInUseChecker;
 
         /**
-         * @param isInUseChecker Function that should return whether the name (parameter) is in use.
+         * @param isInUseChecker Function that should return whether the name
+         * (parameter) is in use.
          */
         private RemoveAdapter(Context context, List<Item> data, Function<String, Boolean> isInUseChecker) {
             this.context = context;
@@ -446,7 +452,7 @@ public class LogicClickListener implements View.OnClickListener {
                 String variableType = CustomVariableUtil.getVariableType(item.text);
                 String variableName = CustomVariableUtil.getVariableName(item.text);
                 String variable = item.text;
-                if(!variable.equals(variableName)) {
+                if (variableType != null && variableName != null) {
                     variable = variableType + ": " + variableName;
                 }
                 checkBoxHolder.checkBox.setText(variable);
