@@ -651,7 +651,9 @@ public class ExtraMenuBean {
             case "Variable":
                 title = "Select a Variable";
                 for (Pair<Integer, String> integerStringPair : projectDataManager.k(javaName)) {
-                    menus.add(CustomVariableUtil.getVariableName(integerStringPair.second));
+                    String variable = integerStringPair.second;
+                    String variableName = CustomVariableUtil.getVariableName(variable);
+                    menus.add(variableName != null? variableName : variable);
                 }
                 break;
 
@@ -671,7 +673,10 @@ public class ExtraMenuBean {
                     }
                 }
                 for (String variable : projectDataManager.e(javaName, 6)) {
-                    menus.add(CustomVariableUtil.getVariableName(variable));
+                    String variableName = CustomVariableUtil.getVariableName(variable);
+                    if (variableName != null) {
+                        menus.add(variableName);
+                    }
                 }
                 break;
 
