@@ -651,7 +651,9 @@ public class ExtraMenuBean {
             case "Variable":
                 title = "Select a Variable";
                 for (Pair<Integer, String> integerStringPair : projectDataManager.k(javaName)) {
-                    menus.add(CustomVariableUtil.getVariableName(integerStringPair.second));
+                    String variable = integerStringPair.second;
+                    String variableName = CustomVariableUtil.getVariableName(variable);
+                    menus.add(variableName != null? variableName : variable);
                 }
                 break;
 
@@ -671,7 +673,10 @@ public class ExtraMenuBean {
                     }
                 }
                 for (String variable : projectDataManager.e(javaName, 6)) {
-                    menus.add(CustomVariableUtil.getVariableName(variable));
+                    String variableName = CustomVariableUtil.getVariableName(variable);
+                    if (variableName != null) {
+                        menus.add(variableName);
+                    }
                 }
                 break;
 
@@ -693,7 +698,7 @@ public class ExtraMenuBean {
                 for (String variable : projectDataManager.e(javaName, 6)) {
                     String variableType = CustomVariableUtil.getVariableType(variable);
                     String variableName = CustomVariableUtil.getVariableName(variable);
-                    if(menuName.equals(variableType)){
+                    if (variableType != null && menuName.equals(variableType)) {
                         title = "Select a " + variableType + " Variable";
                         menus.add(variableName);
                     }
@@ -761,7 +766,9 @@ public class ExtraMenuBean {
         dialog.b(Helper.getResString(R.string.logic_editor_title_enter_string_value));
         dialog.a(R.drawable.rename_96_blue);
 
-        if (!isEmpty(message)) dialog.a(message);
+        if (!isEmpty(message)) {
+            dialog.a(message);
+        }
 
         View root = wB.a(logicEditor, R.layout.property_popup_input_text);
         EditText edittext = root.findViewById(R.id.ed_input);
