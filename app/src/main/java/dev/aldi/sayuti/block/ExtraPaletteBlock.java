@@ -256,7 +256,7 @@ public class ExtraPaletteBlock {
                 }
                 logicEditor.a(variableName, type, variableType, "getVar").setTag(variable);
             } else {
-                logicEditor.a("Invalid: " + variable +, 0xfff44336);
+                logicEditor.a("Invalid: " + variable, 0xfff44336);
             }
 
         }
