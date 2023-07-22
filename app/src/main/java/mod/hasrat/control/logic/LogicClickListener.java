@@ -144,10 +144,10 @@ public class LogicClickListener implements View.OnClickListener {
             boolean validName = !variableName.isEmpty();
             boolean getsInitialized = !variableInitializer.isEmpty();
 
-            String modifierError = modifierLayout.getError();
+            CharSequence modifierError = modifierLayout.getError();
             if (!isModifierEmpty && !isValidModifier && modifierError != null) {
                 modifierLayout.requestFocus();
-                modifierLayout.setError(modifierError);
+                modifierLayout.setError(modifierError.toString());
                 return;
             } else {
                 modifierLayout.setError(null);

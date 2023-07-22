@@ -17,13 +17,13 @@ public class VariableTypeValidator extends MB {
 
     @Override
     public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-        String variableName = charSequence.toString();
+        String variableType = charSequence.toString();
         String trimmedInput = variableType.trim();
         String[] words = trimmedInput.split("\\s+");
         String reconsInput = String.join(" ", words);
         if (!variableType.equals(reconsInput)) {
             b.setErrorEnabled(true);
-            b.setError("Invalid input");
+            b.setError("Extra spaces between or at the end are not allowed.");
             d = false;
             return;
         }
