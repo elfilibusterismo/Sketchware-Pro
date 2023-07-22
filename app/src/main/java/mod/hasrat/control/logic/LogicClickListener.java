@@ -143,7 +143,7 @@ public class LogicClickListener implements View.OnClickListener {
             boolean validType = !variableType.isEmpty();
             boolean validName = !variableName.isEmpty();
             boolean getsInitialized = !variableInitializer.isEmpty();
-
+          
             CharSequence modifierError = modifierLayout.getError();
             if (!isModifierEmpty && !isValidModifier && modifierError != null) {
                 modifierLayout.requestFocus();
@@ -233,7 +233,9 @@ public class LogicClickListener implements View.OnClickListener {
             for (int i = 0, size = variableTypeInstances.size(); i < size; i++) {
                 String instanceName = variableTypeInstances.get(i);
 
-                if (i == 0) data.add(new Item(String.format(variableType.second, size)));
+                if (i == 0) {
+                    data.add(new Item(String.format(variableType.second, size)));
+                }
                 data.add(new Item(instanceName, R.string.logic_editor_message_currently_used_variable));
             }
         }
@@ -283,7 +285,9 @@ public class LogicClickListener implements View.OnClickListener {
             if (validType) {
                 typeLayout.setError(null);
             } else {
-                if (validName) typeLayout.requestFocus();
+                if (validName) {
+                    typeLayout.requestFocus();
+                }
                 typeLayout.setError("Type can't be empty");
             }
 
@@ -334,7 +338,9 @@ public class LogicClickListener implements View.OnClickListener {
             for (int i = 0, size = lists.size(); i < size; i++) {
                 String instanceName = lists.get(i);
 
-                if (i == 0) data.add(new Item(String.format(listType.second, size)));
+                if (i == 0) {
+                    data.add(new Item(String.format(listType.second, size)));
+                }
                 data.add(new Item(instanceName, R.string.logic_editor_message_currently_used_list));
             }
         }
@@ -393,7 +399,8 @@ public class LogicClickListener implements View.OnClickListener {
         private final Function<String, Boolean> isInUseChecker;
 
         /**
-         * @param isInUseChecker Function that should return whether the name (parameter) is in use.
+         * @param isInUseChecker Function that should return whether the name
+         * (parameter) is in use.
          */
         private RemoveAdapter(Context context, List<Item> data, Function<String, Boolean> isInUseChecker) {
             this.context = context;

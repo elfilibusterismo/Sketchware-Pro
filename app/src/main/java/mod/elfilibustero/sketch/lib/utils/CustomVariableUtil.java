@@ -16,7 +16,7 @@ public class CustomVariableUtil {
     private static final int VARIABLE_TYPE = 3;
     private static final int VARIABLE_NAME = 4;
     private static final int VARIABLE_INITIALIZER = 5;
-
+  
     public static String getVariableModifier(String input) {
         Matcher matcher = getMatcher(input);
         if (matcher.find()) {
@@ -59,7 +59,7 @@ public class CustomVariableUtil {
     private static Matcher getMatcher(String input) {
         return PATTERN_CUSTOM_VARIABLE.matcher(input);
     }
-
+    
     private static String removeGenericAndArrayParts(String variableType) {
         int openingAngle = variableType.indexOf('<');
         int closingAngle = variableType.lastIndexOf('>') + 1;
