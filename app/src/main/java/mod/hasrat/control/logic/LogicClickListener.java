@@ -449,6 +449,7 @@ public class LogicClickListener implements View.OnClickListener {
                 if (variableType != null && variableName != null) {
                     variable = variableType + ": " + variableName;
                 }
+                checkBoxHolder.checkBox.setText(variable);
                 checkBoxHolder.checkBox.setChecked(item.isChecked);
 
                 checkBoxHolder.checkBox.setOnClickListener(v -> {

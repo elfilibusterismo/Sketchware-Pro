@@ -399,10 +399,9 @@ public class ExtraPaletteBlock {
                     break;
 
                 default:
-                    String variableType = CustomVariableUtil.getVariableType(name);
                     String variableName = CustomVariableUtil.getVariableName(name);
-                    if (variableType != null && variableName != null) {
-                        logicEditor.a(variableName, "l", variableType, "getVar").setTag(name);
+                    if (variableName != null) {
+                        logicEditor.a(variableName, "l", "List", "getVar").setTag(name);
                     } else {
                         logicEditor.a("Invalid: \"" + name + "\"", 0xfff44336);
                     }

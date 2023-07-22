@@ -5,11 +5,12 @@ import java.util.regex.Pattern;
 
 public class CustomVariableUtil {
     public static final Pattern PATTERN_CUSTOM_VARIABLE = Pattern.compile(
-            "\\b((private|public|protected|static|final|transient|volatile)\\s+)*([\\w$]+(?:\\s*,\\s*[\\w$]+)*(?:\\[\\])*)(?:\\s*<[^>]+>)?\\s+([\\w$]+)\\b"
+            "\\b((private|public|protected|static|final|transient|volatile)\\s+)*([\\w$]+(?:\\s*,\\s*[\\w$]+)*(?:\\[\\])*)(?:\\s*<[^>]+>)?\\s+([\\w$]+)(?:\\s*=\\s*([^;]+))?\\s*"
     );
 
     private static final int VARIABLE_TYPE = 3;
     private static final int VARIABLE_NAME = 4;
+    private static final int VARIABLE_INITIALIZER = 5;
 
     public static String getVariableModifier(String input) {
         String variableType = getVariableType(input);
@@ -41,13 +42,11 @@ public class CustomVariableUtil {
     }
 
     public static String getVariableInitializer(String input) {
-        int equalIndex = input.indexOf('=');
-        if (equalIndex != -1) {
-            String initializer = input.substring(equalIndex + 1).trim();
-            return initializer;
-        } else {
-            return null;
+        Matcher matcher = getMatcher(input);
+        if (matcher.find()) {
+            return matcher.group(VARIABLE_INITIALIZER);
         }
+        return null;
     }
 
     private static Matcher getMatcher(String input) {
