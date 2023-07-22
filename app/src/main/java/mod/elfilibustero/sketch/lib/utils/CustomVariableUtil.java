@@ -25,8 +25,7 @@ public class CustomVariableUtil {
                 int equalIndex = input.indexOf(variableType);
                 int varLength = variableType.length();
                 if (equalIndex != -1) {
-                    String modifier = input.substring(0, equalIndex).trim();
-                    return modifier;
+                    return input.substring(0, equalIndex).trim();
                 }
             }
         }
@@ -73,7 +72,6 @@ public class CustomVariableUtil {
 
         if (openingBracket != -1 && closingBracket != -1) {
             variableType = variableType.substring(0, openingBracket) + variableType.substring(closingBracket);
-            variableType += "Array";
         }
 
         return variableType.trim();
