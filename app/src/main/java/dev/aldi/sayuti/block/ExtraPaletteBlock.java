@@ -403,7 +403,7 @@ public class ExtraPaletteBlock {
                     if (variableName != null) {
                         logicEditor.a(variableName, "l", "List", "getVar").setTag(name);
                     } else {
-                        logicEditor.a("Invalid: \"" + name + "\"", 0xfff44336);
+                        logicEditor.a("Invalid: " + name, 0xfff44336);
                     }
                     break;
             }
