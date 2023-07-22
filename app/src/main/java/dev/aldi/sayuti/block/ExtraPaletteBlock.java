@@ -16,6 +16,7 @@ import a.a.a.kq;
 import mod.SketchwareUtil;
 import mod.agus.jcoderz.beans.ViewBeans;
 import mod.agus.jcoderz.lib.FileResConfig;
+import mod.elfilibustero.sketch.lib.utils.CustomVariableUtil;
 import mod.hasrat.blocks.ExtraBlocks;
 import mod.hasrat.control.logic.LogicClickListener;
 import mod.hey.studios.editor.view.IdGenerator;
@@ -220,15 +221,31 @@ public class ExtraPaletteBlock {
         ArrayList<String> customVariables2 = jC.a(sc_id).e(javaName, 6);
         for (int i = 0; i < customVariables2.size(); i++) {
             if (i == 0) logicEditor.a("Custom Variable", 0xff555555);
-
             String variable = customVariables2.get(i);
-            String temp = variable.replaceAll("\\b(?:public|private|protected|static|final)\\s\\b", "");
-            String[] split = temp.split(" ");
-            logicEditor.a(String.valueOf(split.length), 0xff008dcd);
-            if (split.length == 2 || split.length == 4) {
-                logicEditor.a(split[1], "v", split[0], "getVar").setTag(variable);
+            String variableType = CustomVariableUtil.getVariableType(variable);
+            String variableName = CustomVariableUtil.getVariableName(variable);
+            if (variableType != null && variableName != null) {
+                String type;
+                switch (variableType) {
+                    case "boolean":
+                        type = "b";
+                        break;
+                    case "String":
+                        type = "s";
+                        break;
+                    case "double":
+                    case "int":
+                    case "float":
+                    case "long":
+                        type = "d";
+                        break;
+                    default:
+                        type = "v";
+                        break;
+                }
+                logicEditor.a(variableName, type, variableType, "getVar").setTag(variable);
             } else {
-                SketchwareUtil.toastError("Found invalid data of Custom Variable #" + (i + 1) + ": \"" + variable + "\"");
+                logicEditor.a("Invalid: \"" + variable + "\"", 0xfff44336);
             }
         }
         BlocksHandler.primaryBlocksA(
@@ -374,7 +391,6 @@ public class ExtraPaletteBlock {
         for (Pair<Integer, String> list : jC.a(sc_id).j(javaName)) {
             int type = list.first;
             String name = list.second;
-
             switch (type) {
                 case 1:
                 case 2:
@@ -383,11 +399,12 @@ public class ExtraPaletteBlock {
                     break;
 
                 default:
-                    String[] splitName = name.split(" ");
-                    if (splitName.length > 1) {
-                        logicEditor.a(splitName[1], "l", "List", "getVar").setTag(name);
+                    String variableType = CustomVariableUtil.getVariableType(name);
+                    String variableName = CustomVariableUtil.getVariableName(name);
+                    if (variableType != null && variableName != null) {
+                        logicEditor.a(variableName, "l", variableType, "getVar").setTag(variable);
                     } else {
-                        SketchwareUtil.toastError("Found invalid List data, type:" + type + ", name: \"" + name + "\"");
+                        logicEditor.a("Invalid: \"" + variable + "\"", 0xfff44336);
                     }
                     break;
             }
