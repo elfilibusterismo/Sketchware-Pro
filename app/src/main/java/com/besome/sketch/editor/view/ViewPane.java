@@ -27,6 +27,9 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
+
 import com.besome.sketch.beans.ImageBean;
 import com.besome.sketch.beans.LayoutBean;
 import com.besome.sketch.beans.ProjectResourceBean;
@@ -465,6 +468,9 @@ public class ViewPane extends RelativeLayout {
                     viewBean.layout.paddingRight,
                     viewBean.layout.paddingBottom);
             updateCardView(cardView, injectHandler);
+        }
+        if (classInfo.b("RecyclerView")) {
+            updateRecyclerView((ItemRecyclerView) view, viewBean);
         }
         if (classInfo.b("TabLayout")) {
             updateTabLayout((ItemTabLayout) view, injectHandler);
@@ -918,6 +924,39 @@ public class ViewPane extends RelativeLayout {
         cardView.setUseCompatPadding(Boolean.parseBoolean(TextUtils.isEmpty(compatPadding) ? "false" : compatPadding));
         cardView.setStrokeWidth(PropertiesUtil.resolveSize(strokeWidth, 0));
         cardView.setStrokeColor(PropertiesUtil.isHexColor(strokeColor) ? PropertiesUtil.parseColor(strokeColor) : Color.WHITE);
+    }
+
+    private void updateRecyclerView(ItemRecyclerView recyclerview, ViewBean viewBean) {
+        var handler = new InjectAttributeHandler(viewBean);
+        String layoutManagerValue = handler.getAttributeValueOf("layoutManager");
+        String spanCountValue = handler.getAttributeValueOf("spanCount");
+
+        int spanCount = 2;
+        if (!TextUtils.isEmpty(spanCountValue)) {
+            try {
+                spanCount = Integer.parseInt(spanCountValue);
+            } catch (Exception ignored) {
+            }
+        }
+
+        if (!TextUtils.isEmpty(layoutManagerValue)) {
+            var layoutManager = 
+                    (LinearLayoutManager)
+                            create(layoutManagerValue, new Class[] {Context.class}, getContext());
+            if (layoutManager == null) {
+                layoutManager = 
+                        (GridLayoutManager)
+                                create(
+                                    layoutManagerValue, 
+                                    new Class[] {Context.class, int.class}, 
+                                    getContext(), 
+                                    spanCount);
+            }
+            if (layoutManager != null) {
+                layoutManager.setOrientation(viewBean.layout.orientation);
+                recyclerview.setLayoutManager(layoutManager);
+            }
+        }
     }
 
     private void updateCircleImageView(ItemCircleImageView imageView, InjectAttributeHandler handler) {
