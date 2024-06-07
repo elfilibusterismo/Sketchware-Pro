@@ -60,6 +60,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.sketchware.remod.R;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -961,4 +963,21 @@ public class ViewPane extends RelativeLayout {
         Matcher matcher = Pattern.compile("=\"([^\"]*)\"").matcher(line);
         return matcher.find() ? matcher.group(1) : "";
     }
+
+	public static Object create(String className, Class<?>[] types, Object... params) {
+		try {
+			Class<?> clazz = Class.forName(className);
+			Constructor<?> constructor =
+					(types != null)
+							? clazz.getDeclaredConstructor(types)
+							: clazz.getDeclaredConstructor();
+			return (params != null) ? constructor.newInstance(params) : constructor.newInstance();
+		} catch (ClassNotFoundException
+				| NoSuchMethodException
+				| InstantiationException
+				| InvocationTargetException
+				| IllegalAccessException ignored) {
+		}
+		return null;
+	}
 }
