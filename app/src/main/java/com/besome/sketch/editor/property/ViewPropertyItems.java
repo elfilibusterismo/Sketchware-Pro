@@ -511,6 +511,7 @@ public class ViewPropertyItems extends LinearLayout implements Kw, View.OnClickL
             }
 
             if (classInfo.b("RecyclerView")) {
+                a(bean, "property_orientation");
                 a(bean, "property_custom_view_listview");
             }
 
