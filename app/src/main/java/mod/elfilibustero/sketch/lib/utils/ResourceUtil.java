@@ -27,7 +27,7 @@ public class ResourceUtil {
     public ArrayList<String> getResourceNames() {
         return getResource().stream()
                             .map(ResourceBean::getResName)
-                            .collect(Collectors.toList());
+                            .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public String getResourcePathFromName(String resName) {
