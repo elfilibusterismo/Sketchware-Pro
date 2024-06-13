@@ -47,6 +47,7 @@ public class tx extends RelativeLayout implements View.OnClickListener {
     public Kw n;
 
     private ResourceUtil resImages;
+    private ArrayList<String> images;
 
     public tx(Context context, boolean z, String str, boolean z2) {
         super(context);
@@ -147,6 +148,7 @@ public class tx extends RelativeLayout implements View.OnClickListener {
         this.l = findViewById(R.id.property_menu_item);
         this.d = z2;
         resImages = new ResourceUtil(a, "drawable-xhdpi");
+        images = resImages.getResourceNames();
         if (z) {
             setOnClickListener(this);
             setSoundEffectsEnabled(true);
