@@ -358,6 +358,8 @@ public class ViewPane extends RelativeLayout {
         view.setTranslationY(wB.a(getContext(), viewBean.translationY));
         view.setScaleX(viewBean.scaleX);
         view.setScaleY(viewBean.scaleY);
+        var resImages = new ResourceUtil(sc_id, "drawable-xhdpi");
+        var images = resImages.getResourceNames();
         String backgroundResource = viewBean.layout.backgroundResource;
         if (backgroundResource != null) {
             try {
@@ -365,6 +367,9 @@ public class ViewPane extends RelativeLayout {
                     view.setBackgroundResource(getContext().getResources().getIdentifier(viewBean.layout.backgroundResource, "drawable", getContext().getPackageName()));
                 } else {
                     String backgroundRes = resourcesManager.f(viewBean.layout.backgroundResource);
+                    if (images.contains(backgroundResource)) {
+                        backgroundRes = resImages.getResourcePathFromName(backgroundResource);
+                    }
                     if (backgroundRes.endsWith(".9.png")) {
                         Bitmap decodedBitmap = zB.a(backgroundRes);
                         byte[] ninePatchChunk = decodedBitmap.getNinePatchChunk();
@@ -416,7 +421,12 @@ public class ViewPane extends RelativeLayout {
                 ((ImageView) view).setImageResource(R.drawable.default_image);
             } else {
                 try {
-                    Bitmap decodeFile3 = BitmapFactory.decodeFile(resourcesManager.f(viewBean.image.resName));
+                    var resName = viewBean.image.resName;
+                    var resPath = resourcesManager.f(resName);
+                    if (images.contains(resName)) {
+                        resPath = resImages.getResourcePathFromName(resName);
+                    }
+                    Bitmap decodeFile3 = BitmapFactory.decodeFile(resPath);
                     int round3 = Math.round(getResources().getDisplayMetrics().density / 2.0f);
                     ((ImageView) view).setImageBitmap(Bitmap.createScaledBitmap(decodeFile3, decodeFile3.getWidth() * round3, decodeFile3.getHeight() * round3, true));
                 } catch (Exception unused2) {
