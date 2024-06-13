@@ -27,6 +27,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import mod.elfilibustero.sketch.lib.utils.ResourceUtil;
 import mod.hey.studios.util.Helper;
 
 public class tx extends RelativeLayout implements View.OnClickListener {
@@ -44,6 +45,8 @@ public class tx extends RelativeLayout implements View.OnClickListener {
     public View l;
     public int m;
     public Kw n;
+
+    private ResourceUtil resImages;
 
     public tx(Context context, boolean z, String str, boolean z2) {
         super(context);
@@ -143,6 +146,7 @@ public class tx extends RelativeLayout implements View.OnClickListener {
         this.k = findViewById(R.id.property_item);
         this.l = findViewById(R.id.property_menu_item);
         this.d = z2;
+        resImages = new ResourceUtil(a, "drawable-xhdpi");
         if (z) {
             setOnClickListener(this);
             setSoundEffectsEnabled(true);
