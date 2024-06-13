@@ -24,6 +24,12 @@ public class ResourceUtil {
         return getResourceFiles(fileList);
     }
 
+    public ArrayList<String> getResourceNames() {
+        return getResource().stream()
+                            .map(ResourceBean::getResName)
+                            collect(Collectors.toList());
+    }
+
     public String getResourcePathFromName(String resName) {
         return getResource().stream()
                 .filter(bean -> bean.getResName().equals(resName))
