@@ -116,7 +116,8 @@ public class tx extends RelativeLayout implements View.OnClickListener {
                 this.g.setImageResource(getContext().getResources().getIdentifier(str, "drawable", getContext().getPackageName()));
                 return;
             } else {
-                File file = new File(jC.d(this.a).f(str));
+                var resPath = jC.d(this.a).f(str);
+                File file = new File(resPath);
                 if (file.exists()) {
                     if (Build.VERSION.SDK_INT >= 24) {
                         Context context = getContext();
@@ -260,7 +261,8 @@ public class tx extends RelativeLayout implements View.OnClickListener {
             if (z) {
                 imageView.setImageResource(getContext().getResources().getIdentifier(str, "drawable", getContext().getPackageName()));
             } else {
-                File file = new File(jC.d(this.a).f(str));
+                var resPath = jC.d(this.a).f(str);
+                File file = new File(resPath);
                 if (file.exists()) {
                     if (Build.VERSION.SDK_INT >= 24) {
                         Context context = getContext();
