@@ -118,6 +118,9 @@ public class tx extends RelativeLayout implements View.OnClickListener {
                 return;
             } else {
                 var resPath = jC.d(this.a).f(str);
+                if (images.contains(str)) {
+                    resPath = resImages.getResourcePathFromName(str);
+                }
                 File file = new File(resPath);
                 if (file.exists()) {
                     if (Build.VERSION.SDK_INT >= 24) {
@@ -264,6 +267,9 @@ public class tx extends RelativeLayout implements View.OnClickListener {
                 imageView.setImageResource(getContext().getResources().getIdentifier(str, "drawable", getContext().getPackageName()));
             } else {
                 var resPath = jC.d(this.a).f(str);
+                if (images.contains(str)) {
+                    resPath = resImages.getResourcePathFromName(str);
+                }
                 File file = new File(resPath);
                 if (file.exists()) {
                     if (Build.VERSION.SDK_INT >= 24) {
