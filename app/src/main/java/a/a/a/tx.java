@@ -175,6 +175,7 @@ public class tx extends RelativeLayout implements View.OnClickListener {
                 m.add(0, "NONE");
             }
         }
+        m.addAll(images.getResourceNames());
         Iterator<String> it = m.iterator();
         RadioButton radioButton = null;
         while (it.hasNext()) {
