@@ -421,7 +421,13 @@ public class ViewPane extends RelativeLayout {
                 ((ImageView) view).setImageResource(R.drawable.default_image);
             } else {
                 try {
-                    Bitmap decodeFile3 = BitmapFactory.decodeFile(resourcesManager.f(viewBean.image.resName));
+                    var resName = viewBean.image.resName;
+                    var imageNames = resImages.getResourceNames();
+                    var resPath = resourcesManager.f(resName);
+                    if (imageNames.contains(resName)) {
+                        resPath = resImages.getResourcePathFromName(resName);
+                    }
+                    Bitmap decodeFile3 = BitmapFactory.decodeFile(resPath);
                     int round3 = Math.round(getResources().getDisplayMetrics().density / 2.0f);
                     ((ImageView) view).setImageBitmap(Bitmap.createScaledBitmap(decodeFile3, decodeFile3.getWidth() * round3, decodeFile3.getHeight() * round3, true));
                 } catch (Exception unused2) {
