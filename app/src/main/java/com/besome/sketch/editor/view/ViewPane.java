@@ -358,13 +358,18 @@ public class ViewPane extends RelativeLayout {
         view.setTranslationY(wB.a(getContext(), viewBean.translationY));
         view.setScaleX(viewBean.scaleX);
         view.setScaleY(viewBean.scaleY);
+        var resImages = new ResourceUtil(sc_id, "drawable-xhdpi");
         String backgroundResource = viewBean.layout.backgroundResource;
         if (backgroundResource != null) {
             try {
                 if (resourcesManager.h(backgroundResource) == ProjectResourceBean.PROJECT_RES_TYPE_RESOURCE) {
                     view.setBackgroundResource(getContext().getResources().getIdentifier(viewBean.layout.backgroundResource, "drawable", getContext().getPackageName()));
                 } else {
+                    var imageNames = resImages.getResourceNames();
                     String backgroundRes = resourcesManager.f(viewBean.layout.backgroundResource);
+                    if (imageNames.contains(backgroundResource)) {
+                        backgroundRes = resImages.getResourcePathFromName(backgroundResource);
+                    }
                     if (backgroundRes.endsWith(".9.png")) {
                         Bitmap decodedBitmap = zB.a(backgroundRes);
                         byte[] ninePatchChunk = decodedBitmap.getNinePatchChunk();
