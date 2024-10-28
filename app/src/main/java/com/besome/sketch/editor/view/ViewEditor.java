@@ -6,13 +6,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -45,7 +43,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import a.a.a.DB;
-import a.a.a.GB;
 import a.a.a.Iw;
 import a.a.a.Op;
 import a.a.a.Rp;
@@ -64,12 +61,17 @@ import a.a.a.xB;
 import mod.hey.studios.editor.view.IdGenerator;
 import mod.hey.studios.util.Helper;
 import mod.hey.studios.util.ProjectFile;
+import pro.sketchware.lib.view.DeviceView;
 
 @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})
 public class ViewEditor extends RelativeLayout implements View.OnClickListener, View.OnTouchListener {
 
     private final int[] G = new int[2];
     private final Handler handler = new Handler();
+    private DeviceView deviceView;
+    private Size currentSize;
+    private int displayWidth;
+    private int displayHeight;
     public boolean isLayoutChanged = true;
     public PaletteWidget paletteWidget;
     private ObjectAnimator animatorTranslateX;
@@ -85,24 +87,18 @@ public class ViewEditor extends RelativeLayout implements View.OnClickListener, 
     private DraggingListener draggingListener;
     private ay O;
     private ProjectFileBean projectFileBean;
-    private boolean S = true;
-    private boolean T = false;
+    private boolean isToolbarVisible = true;
+    private boolean isStatusBarVisible = false;
     private LinearLayout paletteGroup;
     private PaletteGroupItem favoritePalette;
     private String a;
-    private LinearLayout aa;
     private String b;
     private int screenType;
     private boolean da = true;
     private int[] e = new int[20];
     private float f = 0;
-    private int displayWidth;
-    private int displayHeight;
     private PaletteFavorite paletteFavorite;
-    private LinearLayout k;
     private TextView fileName;
-    private ImageView imgPhoneTopBg;
-    private LinearLayout toolbar;
     private ViewPane viewPane;
     private Vibrator vibrator;
     private View r = null;
@@ -256,7 +252,33 @@ public class ViewEditor extends RelativeLayout implements View.OnClickListener, 
     @Override
     public void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (isLayoutChanged) a();
+        if (isLayoutChanged) {
+            displayWidth = getResources().getDisplayMetrics().widthPixels;
+            displayHeight = getResources().getDisplayMetrics().heightPixels;
+        
+            viewPane.setVisibility(View.VISIBLE);
+
+            var dimensions = calculateDimensions(currentSize, f, displayWidth, displayHeight);
+
+            int offsetX = dimensions.offsetX;
+            int offsetY = dimensions.offsetY;
+            int editorWidth = dimensions.editorWidth;
+            int editorHeight = dimensions.editorHeight;
+
+            float scale =
+                    Math.min(
+                            (float) (editorWidth - offsetX * 2) / (float) displayWidth,
+                            (float) (editorHeight - offsetY * 2) / (float) displayHeight);
+            int scaleX = offsetX - (int) (((float) displayWidth - (float) displayWidth * scale) / 2.0F);
+            int scaleY = offsetY - (int) ((displayHeight - scale * displayHeight) / 2.0F);
+
+            deviceView.setLayoutParams(new FrameLayout.LayoutParams(displayWidth, displayHeight));
+            deviceView.setScaleX(scale);
+            deviceView.setScaleY(scale);
+            deviceView.setX((float) scaleX);
+            deviceView.setY((float) scaleY);
+            isLayoutChanged = false;
+        }
     }
 
     @Override
@@ -496,54 +518,25 @@ public class ViewEditor extends RelativeLayout implements View.OnClickListener, 
         findViewById(R.id.btn_editproperties).setOnClickListener(this);
         findViewById(R.id.img_close).setOnClickListener(this);
         rippleRound(deleteView, "#696969", "#ffffff", 200);
+        
+        deviceView = new DeviceView(context);
+        shape.addView(deviceView);
+        currentSize = Size.LARGE;
         f = wB.a(context, 1.0f);
         I = (int) (I * f);
         J = (int) (J * f);
+        
         displayWidth = getResources().getDisplayMetrics().widthPixels;
         displayHeight = getResources().getDisplayMetrics().heightPixels;
-        aa = new LinearLayout(context);
-        aa.setOrientation(LinearLayout.VERTICAL);
-        aa.setGravity(Gravity.CENTER);
-        aa.setLayoutParams(new FrameLayout.LayoutParams(displayWidth, displayHeight));
-        shape.addView(aa);
-        k = new LinearLayout(context);
-        k.setBackgroundColor(0xff0084c2);
-        k.setOrientation(LinearLayout.HORIZONTAL);
-        k.setGravity(Gravity.CENTER_VERTICAL);
-        k.setLayoutParams(new FrameLayout.LayoutParams(displayWidth, (int) (f * 25f)));
-        fileName = new TextView(context);
-        fileName.setTextColor(Color.WHITE);
-        fileName.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
-        fileName.setPadding((int) (f * 8f), 0, 0, 0);
-        fileName.setGravity(Gravity.CENTER_VERTICAL);
-        k.addView(fileName);
-        imgPhoneTopBg = new ImageView(context);
-        imgPhoneTopBg.setImageResource(R.drawable.phone_bg_top);
-        imgPhoneTopBg.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
-        imgPhoneTopBg.setScaleType(ImageView.ScaleType.FIT_END);
-        k.addView(imgPhoneTopBg);
-        shape.addView(k);
-        toolbar = new LinearLayout(context);
-        toolbar.setBackgroundColor(0xff008dcd);
-        toolbar.setOrientation(LinearLayout.HORIZONTAL);
-        toolbar.setGravity(Gravity.CENTER_VERTICAL);
-        toolbar.setLayoutParams(new FrameLayout.LayoutParams(displayWidth, (int) (f * 48f)));
-        TextView tvToolbar = new TextView(context);
-        tvToolbar.setTextColor(Color.WHITE);
-        tvToolbar.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
-        tvToolbar.setPadding((int) (f * 16f), 0, 0, 0);
-        tvToolbar.setGravity(Gravity.CENTER_VERTICAL);
-        tvToolbar.setTextSize(15f);
-        tvToolbar.setText("Toolbar");
-        tvToolbar.setTypeface(null, Typeface.BOLD);
-        toolbar.addView(tvToolbar);
-        shape.addView(toolbar);
+
+        fileName = deviceView.getFileName();
+
         viewPane = new ViewPane(getContext());
-        viewPane.setLayoutParams(new FrameLayout.LayoutParams(displayWidth, displayHeight));
-        shape.addView(viewPane);
+        viewPane.setLayoutParams(
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT));
+        deviceView.addContainer(viewPane);
         viewPane.setOnTouchListener(this);
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         isVibrationEnabled = new DB(context, "P12").a("P12I0", true);
@@ -698,7 +691,7 @@ public class ViewEditor extends RelativeLayout implements View.OnClickListener, 
     private boolean b(float f, float f2) {
         int[] locationOnScreen = new int[2];
         viewPane.getLocationOnScreen(locationOnScreen);
-        return f > locationOnScreen[0] && f < locationOnScreen[0] + (viewPane.getWidth() * viewPane.getScaleX()) && f2 > locationOnScreen[1] && f2 < locationOnScreen[1] + (viewPane.getHeight() * viewPane.getScaleY());
+        return f > locationOnScreen[0] && f < locationOnScreen[0] + (viewPane.getWidth() * deviceView.getScaleX()) && f2 > locationOnScreen[1] && f2 < locationOnScreen[1] + (viewPane.getHeight() * deviceView.getScaleY());
     }
 
     private void deleteWidgetFromCollection(String str) {
@@ -721,9 +714,8 @@ public class ViewEditor extends RelativeLayout implements View.OnClickListener, 
     }
 
     private void setPreviewColors(String str) {
-        k.setBackgroundColor(ProjectFile.getColor(str, ProjectFile.COLOR_PRIMARY_DARK));
-        imgPhoneTopBg.setBackgroundColor(ProjectFile.getColor(str, ProjectFile.COLOR_PRIMARY_DARK));
-        toolbar.setBackgroundColor(ProjectFile.getColor(str, ProjectFile.COLOR_PRIMARY));
+        deviceView.getStatusBar().setBackgroundColor(ProjectFile.getColor(str, ProjectFile.COLOR_PRIMARY_DARK));
+        deviceView.getToolbar().setBackgroundColor(ProjectFile.getColor(str, ProjectFile.COLOR_PRIMARY));
     }
 
     private void b(boolean z) {
@@ -753,15 +745,18 @@ public class ViewEditor extends RelativeLayout implements View.OnClickListener, 
         }
         removeFab();
         if (projectFileBean.fileType == ProjectFileBean.PROJECT_FILE_TYPE_ACTIVITY) {
-            S = projectFileBean.hasActivityOption(ProjectFileBean.OPTION_ACTIVITY_TOOLBAR);
-            T = projectFileBean.hasActivityOption(ProjectFileBean.OPTION_ACTIVITY_FULLSCREEN);
+            isToolbarVisible = projectFileBean.hasActivityOption(ProjectFileBean.OPTION_ACTIVITY_TOOLBAR);
+            isStatusBarVisible = !projectFileBean.hasActivityOption(ProjectFileBean.OPTION_ACTIVITY_FULLSCREEN);
             if (projectFileBean.hasActivityOption(ProjectFileBean.OPTION_ACTIVITY_FAB)) {
                 addFab(jC.a(str).h(projectFileBean.getXmlName()));
             }
         } else {
-            S = false;
-            T = false;
+            isToolbarVisible = false;
+            isStatusBarVisible = false;
         }
+        deviceView.setStatusBarVisibility(isStatusBarVisible);
+        deviceView.setToolbarVisibility(isToolbarVisible);
+        
         isLayoutChanged = true;
         if (viewPane != null) {
             viewPane.setScId(str);
@@ -780,76 +775,7 @@ public class ViewEditor extends RelativeLayout implements View.OnClickListener, 
         itemView.setSelection(true);
         H = itemView;
     }
-
-    private void a() {
-        toolbar.setVisibility(S ? View.VISIBLE : View.GONE);
-        k.setVisibility(T ? View.GONE : View.VISIBLE);
-
-        viewPane.setVisibility(View.VISIBLE);
-        displayWidth = getResources().getDisplayMetrics().widthPixels;
-        displayHeight = getResources().getDisplayMetrics().heightPixels;
-        boolean isLandscapeMode = displayWidth > displayHeight;
-        int var4 = (int) (f * (!isLandscapeMode ? 12.0F : 24.0F));
-        int var5 = (int) (f * (!isLandscapeMode ? 20.0F : 10.0F));
-        int statusBarHeight = GB.f(getContext());
-        int toolBarHeight = GB.a(getContext());
-        int var9 = displayWidth - (int) (120.0F * f);
-        int var8 = displayHeight - statusBarHeight - toolBarHeight - (int) (f * 48.0F) - (int) (f * 48.0F);
-        if (screenType == 0 && da) {
-            var8 -= (int) (f * 56.0F);
-        }
-
-        float var11 = Math.min((float) var9 / (float) displayWidth, (float) var8 / (float) displayHeight);
-        float var3 = Math.min((float) (var9 - var4 * 2) / (float) displayWidth, (float) (var8 - var5 * 2) / (float) displayHeight);
-
-        aa.setLayoutParams(new FrameLayout.LayoutParams(displayWidth, displayHeight));
-        aa.setScaleX(var11);
-        aa.setScaleY(var11);
-        aa.setX(-((int) ((displayWidth - displayWidth * var11) / 2.0F)));
-        aa.setY(-((int) ((displayHeight - displayHeight * var11) / 2.0F)));
-        int var10 = var4 - (int) ((displayWidth - displayWidth * var3) / 2.0F);
-        int var13 = var5;
-        if (k.getVisibility() == View.VISIBLE) {
-            k.setLayoutParams(new FrameLayout.LayoutParams(displayWidth, statusBarHeight));
-            k.setScaleX(var3);
-            k.setScaleY(var3);
-            var11 = statusBarHeight;
-            float var12 = var11 * var3;
-            k.setX(var10);
-            k.setY((var5 - (int) ((var11 - var12) / 2.0F)));
-            var13 = var5 + (int) var12;
-        }
-
-        var8 = var13;
-        if (toolbar.getVisibility() == View.VISIBLE) {
-            toolbar.setLayoutParams(new FrameLayout.LayoutParams(displayWidth, toolBarHeight));
-            toolbar.setScaleX(var3);
-            toolbar.setScaleY(var3);
-            var11 = (float) toolBarHeight * var3;
-            toolbar.setX(var10);
-            toolbar.setY((var13 - (int) (((float) toolBarHeight - var11) / 2.0F)));
-            var8 = var13 + (int) var11;
-        }
-
-        var13 = displayHeight;
-        if (k.getVisibility() == View.VISIBLE) {
-            var13 = displayHeight - statusBarHeight;
-        }
-
-        var5 = var13;
-        if (toolbar.getVisibility() == View.VISIBLE) {
-            var5 = var13 - toolBarHeight;
-        }
-
-        viewPane.setLayoutParams(new FrameLayout.LayoutParams(displayWidth, var5));
-        viewPane.setScaleX(var3);
-        viewPane.setScaleY(var3);
-        var11 = var5;
-        viewPane.setX(var10);
-        viewPane.setY(var8 - (int) ((var11 - var3 * var11) / 2.0F));
-        isLayoutChanged = false;
-    }
-
+    
     public void addWidgetLayout(PaletteWidget.a aVar, String str) {
         View widget = paletteWidget.a(aVar, str);
         widget.setClickable(true);
@@ -989,6 +915,56 @@ public class ViewEditor extends RelativeLayout implements View.OnClickListener, 
         GG.setCornerRadius((float) round);
         RippleDrawable RE = new RippleDrawable(new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.parseColor(pressed)}), GG, null);
         view.setBackground(RE);
+    }
+    
+    public enum Size {
+        SMALL,
+        DEFAULT,
+        LARGE
+    }
+
+    public void setSize(Size size) {
+        if (currentSize != size) {
+            currentSize = size;
+            requestLayout();
+        }
+    }
+
+    private class EditorDimensions {
+        int offsetX;
+        int offsetY;
+        int editorWidth;
+        int editorHeight;
+
+        public EditorDimensions(int offsetX, int offsetY, int editorWidth, int editorHeight) {
+            this.offsetX = offsetX;
+            this.offsetY = offsetY;
+            this.editorWidth = editorWidth;
+            this.editorHeight = editorHeight;
+        }
+    }
+
+    private EditorDimensions calculateDimensions(
+            Size currentSize, float dip, int totalWidth, int totalHeight) {
+        boolean isLandscapeMode = totalWidth > totalHeight;
+
+        return switch (currentSize) {
+            case SMALL -> new EditorDimensions(
+                    (int) (dip * (isLandscapeMode ? 45.0f : 20.0f)),
+                    (int) (dip * (isLandscapeMode ? 20.0f : 45.0f)),
+                    totalWidth - (int) (dip * (isLandscapeMode ? 190.0f : 180.0f)),
+                    totalHeight - (int) (dip * (isLandscapeMode ? 110.0f : 90.0f)) - (int) (dip * (isLandscapeMode ? 110.0f : 90.0f)));
+            case DEFAULT -> new EditorDimensions(
+                    (int) (dip * (isLandscapeMode ? 28.0f : 16.0f)),
+                    (int) (dip * (isLandscapeMode ? 16.0f : 28.0f)),
+                    totalWidth - (int) (dip * (isLandscapeMode ? 160.0f : 150.0f)),
+                    totalHeight - (int) (dip * (isLandscapeMode ? 100.0f : 60.0f)) - (int) (dip * (isLandscapeMode ? 100.0f : 60.0f)));
+            case LARGE -> new EditorDimensions(
+                    (int) (dip * (isLandscapeMode ? 20.0f : 12.0f)),
+                    (int) (dip * (isLandscapeMode ? 12.0f : 20.0f)),
+                    totalWidth - (int) (dip * (isLandscapeMode ? 150.0f : 120.0f)),
+                    totalHeight - (int) (dip * (isLandscapeMode ? 90.0f : 48.0f)) - (int) (dip * (isLandscapeMode ? 90.0f : 48.0f)));
+        };
     }
 
     enum PaletteGroup {
