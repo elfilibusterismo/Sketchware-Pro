@@ -530,6 +530,27 @@ public class ViewPane extends RelativeLayout {
             }
         }
     }
+    
+    @Override
+    public float getScaleX() {
+        return findScaledParent(this).getScaleX();
+    }
+    
+    @Override
+    public float getScaleY() {
+        return findScaledParent(this).getScaleY();
+    }
+    
+    private View findScaledParent(View view) {
+        var parent = view.getParent();
+        if (parent instanceof View parentView) {
+            if (parentView.getScaleX() == 1.0f && parentView.getScaleY() == 1.0f) {
+                return findScaledParent(parentView);
+            }
+            return parentView;
+        }
+        return this;
+    }
 
     public sy findItemViewByTag(String str) {
         View findViewWithTag;
